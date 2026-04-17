@@ -294,6 +294,7 @@ fun UserLoginScreen(
         onTwoFactorLogin = viewModel::submit,
         onQrRetry = viewModel::onQrRetry,
         onSetTwoFactor = viewModel::setTwoFactorCode,
+        onUseGuardTotp = viewModel::useGuardTotp,
         onRetryConnection = onRetryConnection,
         onContinueOffline = onContinueOffline,
         onLaunchGog = { gogOAuthLauncher.launch(Intent(context, GOGOAuthActivity::class.java)) },
@@ -316,6 +317,7 @@ private fun UserLoginScreenContent(
     onTwoFactorLogin: () -> Unit,
     onQrRetry: () -> Unit,
     onSetTwoFactor: (String) -> Unit,
+    onUseGuardTotp: () -> Unit,
     onRetryConnection: () -> Unit,
     onContinueOffline: () -> Unit,
     onLaunchGog: () -> Unit,
@@ -448,6 +450,7 @@ private fun UserLoginScreenContent(
                                             else -> ""
                                         },
                                         onSetTwoFactor = onSetTwoFactor,
+                                        onUseGuardTotp = onUseGuardTotp,
                                         onLogin = onTwoFactorLogin,
                                     )
                                 } else {
@@ -977,6 +980,7 @@ private fun Preview_UserLoginScreen(
                 onTwoFactorLogin = { },
                 onQrRetry = { },
                 onSetTwoFactor = { },
+                onUseGuardTotp = { },
                 onShowLoginScreen = { },
                 onRetryConnection = { },
                 onContinueOffline = { },
@@ -1013,6 +1017,7 @@ private fun Preview_UserLoginScreen_Landscape(
                 onTwoFactorLogin = { },
                 onQrRetry = { },
                 onSetTwoFactor = { },
+                onUseGuardTotp = { },
                 onShowLoginScreen = { },
                 onRetryConnection = { },
                 onContinueOffline = { },

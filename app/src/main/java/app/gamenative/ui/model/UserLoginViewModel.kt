@@ -8,12 +8,11 @@ import app.gamenative.enums.LoginResult
 import app.gamenative.enums.LoginScreen
 import app.gamenative.events.AndroidEvent
 import app.gamenative.events.SteamEvent
+import app.gamenative.service.SteamAuthenticator
 import app.gamenative.service.SteamService
 import app.gamenative.ui.data.UserLoginState
 import app.gamenative.PrefManager
 import com.posthog.PostHog
-import `in`.dragonbra.javasteam.steam.authentication.IAuthenticator
-import java.util.concurrent.CompletableFuture
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -32,68 +31,7 @@ class UserLoginViewModel : ViewModel() {
 
     private val submitChannel = Channel<String>()
 
-    private val authenticator = object : IAuthenticator {
-        override fun acceptDeviceConfirmation(): CompletableFuture<Boolean> {
-            Timber.tag("UserLoginViewModel").i("Two-Factor, device confirmation")
-
-            _loginState.update { currentState ->
-                currentState.copy(
-                    loginResult = LoginResult.DeviceConfirm,
-                    loginScreen = LoginScreen.TWO_FACTOR,
-                    isLoggingIn = false,
-                    lastTwoFactorMethod = "steam_guard",
-                )
-            }
-
-            return CompletableFuture.completedFuture(true)
-        }
-
-        override fun getDeviceCode(previousCodeWasIncorrect: Boolean): CompletableFuture<String> {
-            Timber.tag("UserLoginViewModel").d("Two-Factor, device code")
-
-            _loginState.update { currentState ->
-                currentState.copy(
-                    loginResult = LoginResult.DeviceAuth,
-                    loginScreen = LoginScreen.TWO_FACTOR,
-                    isLoggingIn = false,
-                    previousCodeIncorrect = previousCodeWasIncorrect,
-                    lastTwoFactorMethod = "authenticator_code",
-                )
-            }
-
-            return CompletableFuture<String>().apply {
-                viewModelScope.launch {
-                    val code = submitChannel.receive()
-                    complete(code)
-                }
-            }
-        }
-
-        override fun getEmailCode(
-            email: String?,
-            previousCodeWasIncorrect: Boolean,
-        ): CompletableFuture<String> {
-            Timber.tag("UserLoginViewModel").d("Two-Factor, asking for email code")
-
-            _loginState.update { currentState ->
-                currentState.copy(
-                    loginResult = LoginResult.EmailAuth,
-                    loginScreen = LoginScreen.TWO_FACTOR,
-                    isLoggingIn = false,
-                    email = email,
-                    previousCodeIncorrect = previousCodeWasIncorrect,
-                    lastTwoFactorMethod = "email_code",
-                )
-            }
-
-            return CompletableFuture<String>().apply {
-                viewModelScope.launch {
-                    val code = submitChannel.receive()
-                    complete(code)
-                }
-            }
-        }
-    }
+    private val authenticator = SteamAuthenticator(_loginState, submitChannel, viewModelScope)
 
     private val onSteamConnected: (SteamEvent.Connected) -> Unit = {
         Timber.i("Received is connected")
@@ -318,6 +256,21 @@ class UserLoginViewModel : ViewModel() {
     fun setTwoFactorCode(twoFactorCode: String) {
         _loginState.update { currentState ->
             currentState.copy(twoFactorCode = twoFactorCode)
+        }
+    }
+
+    fun useGuardTotp() {
+        authenticator.useGuardTotp = true
+
+        with(_loginState.value) {
+            viewModelScope.launch {
+                SteamService.startLoginWithCredentials(
+                    username = username,
+                    password = password,
+                    rememberSession = rememberSession,
+                    authenticator = authenticator,
+                )
+            }
         }
     }
 

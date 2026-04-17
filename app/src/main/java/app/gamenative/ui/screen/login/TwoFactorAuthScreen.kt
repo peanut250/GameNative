@@ -20,6 +20,7 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import app.gamenative.ui.component.NoExtractOutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -49,6 +50,7 @@ fun TwoFactorAuthScreenContent(
     userLoginState: UserLoginState,
     message: String,
     onSetTwoFactor: (String) -> Unit,
+    onUseGuardTotp: () -> Unit,
     onLogin: () -> Unit,
 ) {
     Column(
@@ -69,6 +71,12 @@ fun TwoFactorAuthScreenContent(
 
         if (userLoginState.loginResult == LoginResult.DeviceConfirm) {
             LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+            Spacer(modifier = Modifier.height(48.dp))
+            TextButton(
+                onClick = onUseGuardTotp
+            ) {
+                Text(stringResource(R.string.steam_2fa_use_guard_totp))
+            }
         } else if (userLoginState.loginResult == LoginResult.EmailAuth ||
             userLoginState.loginResult == LoginResult.DeviceAuth
         ) {
@@ -187,6 +195,9 @@ private fun Preview_TwoFactorAuthScreen(
                     },
                     onSetTwoFactor = { value ->
                         currentState = currentState.copy(twoFactorCode = value)
+                    },
+                    onUseGuardTotp = {
+                        currentState = currentState.copy(twoFactorCode = "")
                     },
                     onLogin = {
                         currentState = currentState.copy(twoFactorCode = "")
