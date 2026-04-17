@@ -22,6 +22,7 @@ class SteamAuthenticator(var loginState : MutableStateFlow<UserLoginState>,
         Timber.tag("UserLoginViewModel").i("Two-Factor, device confirmation")
 
         if (useGuardTotp) {
+            useGuardTotp = false
             return CompletableFuture.completedFuture(false)
         }
 
