@@ -71,7 +71,7 @@ fun TwoFactorAuthScreenContent(
 
         if (userLoginState.loginResult == LoginResult.DeviceConfirm) {
             LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
-            Spacer(modifier = Modifier.height(48.dp))
+            Spacer(modifier = Modifier.height(16.dp))
             TextButton(
                 onClick = onUseGuardTotp
             ) {
