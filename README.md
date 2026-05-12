@@ -7,12 +7,10 @@ GameNative allows you to play games you own on Steam, Epic and GOG directly on A
 
 [Playing Stray on Poco F6](https://github.com/user-attachments/assets/1870fd14-7de9-4054-ba92-d3a5c73686b5)
 
-This is a fork of [Pluvia](https://github.com/oxters168/Pluvia), a Steam client for Android.
-
 ## How to Use
 
 (Note that GameNative is still in its early stages, and all games may not work, or may require tweaking to get working well)
-1. Download the latest release [here](https://downloads.gamenative.app/releases/0.9.0/gamenative-v0.9.0.apk)
+1. Download the latest release [here](https://downloads.gamenative.app/releases/0.9.2/gamenative-v0.9.2.apk)
 2. Install the APK on your Android device
 3. Login to your Steam account
 4. Install your game
@@ -41,6 +39,8 @@ Join our [Discord server](https://discord.gg/2hKv4VfZfE) for support and updates
 
 ## License
 [GPL 3.0](https://github.com/utkarshdalal/GameNative/blob/master/LICENSE)
+
+See [THIRD_PARTY_NOTICES](THIRD_PARTY_NOTICES) for attributions, copyleft source offers, and notices about third-party and proprietary components bundled with the application.
 
 ## Analytics & Privacy
 
